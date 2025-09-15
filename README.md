@@ -30,7 +30,6 @@ This tool analyzes:
 | 📈 Skill Visualization| Displays matched/missing skills using charts                               |
 | 🧠 Smart Suggestions  | Recommends missing skills based on job role                                 |
 | 🌐 Web Interface      | Streamlit-based GUI for easy interaction                                    |
-| 📚 Multi-Resume Comparison | Compare multiple resumes against one job description               |
 
 ---
 
