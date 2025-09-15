@@ -1,4 +1,6 @@
 flask
+gunicorn
+Werkzeug
 spacy
 python-docx
 PyMuPDF
