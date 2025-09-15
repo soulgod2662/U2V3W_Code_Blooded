@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Resume Skill Extractor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 font-[Poppins]">
+  <div class="min-h-screen flex items-center justify-center px-4">
+    <div class="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-8">
+      <h1 class="text-3xl font-semibold text-center text-indigo-600 mb-8">Resume Skill Extractor</h1>
+
+      <!-- Upload Form -->
+      <form action="/compare" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <div>
+          <label for="resume" class="block font-medium mb-2 text-gray-700">Upload Resume (PDF or DOCX)</label>
+          <input type="file" name="resume" accept=".pdf,.docx" required
+                 class="block w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label for="job_description" class="block font-medium mb-2 text-gray-700">Paste Job Description</label>
+          <textarea name="job_description" rows="8" required
+                    class="block w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+        </div>
+
+        <button type="submit"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition">
+          Compare Skills
+        </button>
+      </form>
+
+      <!-- Download Button -->
+      {% if matched_skills %}
+      <form action="/download" method="POST" class="mt-6 text-center">
+        <input type="hidden" name="matched" value="{{ matched_skills | join(',') }}">
+        <input type="hidden" name="missing" value="{{ missing_skills | join(',') }}">
+        <input type="hidden" name="score" value="{{ match_score }}">
+        <button type="submit"
+                class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium transition">
+          📥 Download Results (CSV)
+        </button>
+      </form>
+      {% endif %}
+
+      <!-- Results Section -->
+      {% if matched_skills %}
+      <div class="mt-10 border-t pt-8">
+        <h2 class="text-2xl font-semibold text-gray-800">Skill Comparison Results</h2>
+        <p class="mt-2 text-lg text-gray-600"><strong>Match Score:</strong> {{ match_score }}%</p>
+
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-lg font-medium text-green-600 mb-2">✅ Matched Skills</h3>
+            <ul class="list-disc list-inside space-y-1">
+              {% for skill in matched_skills %}
+                <li class="text-gray-700">{{ skill }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-medium text-red-600 mb-2">❌ Missing Skills</h3>
+            <ul class="list-disc list-inside space-y-1">
+              {% for skill in missing_skills %}
+                <li class="text-gray-700">{{ skill }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Suggestions -->
+        {% if suggestions %}
+        <div class="mt-6">
+          <h3 class="text-lg font-medium text-indigo-600 mb-2">💡 Suggestions for Missing Skills</h3>
+          <ul class="space-y-2">
+            {% for skill, tip in suggestions.items() %}
+              <li class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2">
+                <strong class="text-gray-800">{{ skill }}:</strong> <span class="text-gray-600">{{ tip }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <!-- Chart -->
+        <div class="mt-8">
+          <h3 class="text-lg font-medium text-indigo-600 mb-4">📊 Skill Match Chart</h3>
+          <span id="matchedCount" class="hidden">{{ matched_skills | length }}</span>
+          <span id="missingCount" class="hidden">{{ missing_skills | length }}</span>
+          <canvas id="skillChart" class="w-full max-w-md mx-auto"></canvas>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- External Chart Script -->
+  <script src="{{ url_for('static', filename='chart.js') }}"></script>
+</body>
+</html>

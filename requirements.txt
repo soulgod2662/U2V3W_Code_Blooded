@@ -1,0 +1,7 @@
+flask
+spacy
+python-docx
+PyMuPDF
+pandas
+fuzzywuzzy
+python-Levenshtein
